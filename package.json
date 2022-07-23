@@ -1,0 +1,20 @@
+{
+  "name": "express-mesto-gha",
+  "version": "1.0.0",
+  "description": "[![Tests](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-13-sprint.yml) [![Tests](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-14-sprint.yml) # [Проект Mesto](https://github.com/pnrf/express-mesto-gha) фронтенд + бэкенд *- это учебный проект по основам backend на курсе \"веб-разработчик\" в Яндекс.Практикуме (**13-14 спринты**).*",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pnrf/express-mesto-gha.git"
+  },
+  "keywords": [],
+  "author": "Yuri A. Pankratov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pnrf/express-mesto-gha/issues"
+  },
+  "homepage": "https://github.com/pnrf/express-mesto-gha#readme"
+}
