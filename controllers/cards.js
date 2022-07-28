@@ -34,6 +34,8 @@ module.exports.deleteCardById = (req, res) => {
     .catch((err) => {
       if (err.message === 'NotFound') {
         res.status(NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
+      } else {
+        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
