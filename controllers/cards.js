@@ -15,7 +15,7 @@ module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
-  return Cards.create({ name, link, owner })
+  Cards.create({ name, link, owner })
     .then((card) => res.status(SUCСESSFUL_REQUEST).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -29,7 +29,7 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCardById = (req, res) => {
   const { cardId } = req.params;
 
-  return Cards.findByIdAndRemove(cardId)
+  Cards.findByIdAndRemove(cardId)
     .then((card) => res.status(SUCСESSFUL_REQUEST).send(card))
     .catch((err) => {
       if (err.name === 'CastError') {

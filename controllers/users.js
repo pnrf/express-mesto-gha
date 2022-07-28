@@ -14,7 +14,7 @@ module.exports.getAllUsers = (req, res) => {
 module.exports.getUserById = (req, res) => {
   const { userId } = req.params;
 
-  return User.findById(userId)
+  User.findById(userId)
     .then((user) => res.status(SUCСESSFUL_REQUEST).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -30,7 +30,7 @@ module.exports.getUserById = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
-  return User.create({ name, about, avatar })
+  User.create({ name, about, avatar })
     .then((user) => res.status(SUCСESSFUL_REQUEST).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
@@ -44,7 +44,7 @@ module.exports.createUser = (req, res) => {
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
 
-  return User.findByIdAndUpdate(
+  User.findByIdAndUpdate(
     req.user._id,
     { name, about },
     { new: true, runValidators: true },
@@ -63,7 +63,7 @@ module.exports.updateProfile = (req, res) => {
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
-  return User.findByIdAndUpdate(
+  User.findByIdAndUpdate(
     req.user._id,
     { avatar },
     { new: true, runValidators: true },
