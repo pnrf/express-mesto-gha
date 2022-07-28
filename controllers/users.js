@@ -17,7 +17,9 @@ module.exports.getUserById = (req, res) => {
   return User.findById(userId)
     .then((user) => res.status(SUCСESSFUL_REQUEST).send(user))
     .catch((err) => {
-      if (err.message === 'NotFound') {
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные при создании пользователя -- ${err.name}` });
+      } else if (err.message === 'NotFound') {
         res.status(NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' });
       } else {
         res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' });
@@ -32,7 +34,7 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.status(SUCСESSFUL_REQUEST).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные при создании пользователя -- ${err.name} -- ${err.message}` });
+        res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные при создании пользователя -- ${err.name}` });
       } else {
         res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' });
       }
@@ -49,7 +51,7 @@ module.exports.updateProfile = (req, res) => {
   ).then((user) => res.status(SUCСESSFUL_REQUEST).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные при обновлении профиля -- ${err.name} -- ${err.message}` });
+        res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные при обновлении профиля -- ${err.name}` });
       } else if (err.message === 'NotFound') {
         res.status(NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден' });
       } else {
@@ -68,7 +70,7 @@ module.exports.updateAvatar = (req, res) => {
   ).then((user) => res.status(SUCСESSFUL_REQUEST).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные при обновлении аватара -- ${err.name} -- ${err.message}` });
+        res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные при обновлении аватара -- ${err.name}` });
       } else if (err.message === 'NotFound') {
         res.status(NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден' });
       } else {
