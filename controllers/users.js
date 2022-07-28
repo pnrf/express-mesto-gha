@@ -7,6 +7,7 @@ const SERVER_ERROR = 500;
 
 module.exports.getAllUsers = (req, res) => {
   User.find({})
+    .orFail(() => new Error('NotFound'))
     .then((users) => res.status(SUCСESSFUL_REQUEST).send(users))
     .catch(() => res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' }));
 };
@@ -15,6 +16,7 @@ module.exports.getUserById = (req, res) => {
   const { userId } = req.params;
 
   User.findById(userId)
+    .orFail(() => new Error('NotFound'))
     .then((user) => res.status(SUCСESSFUL_REQUEST).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -48,7 +50,8 @@ module.exports.updateProfile = (req, res) => {
     req.user._id,
     { name, about },
     { new: true, runValidators: true },
-  ).then((user) => res.status(SUCСESSFUL_REQUEST).send(user))
+  ).orFail(() => new Error('NotFound'))
+    .then((user) => res.status(SUCСESSFUL_REQUEST).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные при обновлении профиля -- ${err.name}` });
@@ -67,7 +70,8 @@ module.exports.updateAvatar = (req, res) => {
     req.user._id,
     { avatar },
     { new: true, runValidators: true },
-  ).then((user) => res.status(SUCСESSFUL_REQUEST).send(user))
+  ).orFail(() => new Error('NotFound'))
+    .then((user) => res.status(SUCСESSFUL_REQUEST).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные при обновлении аватара -- ${err.name}` });
