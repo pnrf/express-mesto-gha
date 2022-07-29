@@ -1,15 +1,10 @@
 const Cards = require('../models/card');
-
-const SUCСESSFUL_REQUEST = 200;
-const BAD_REQUEST = 400;
-const NOT_FOUND = 404;
-const SERVER_ERROR = 500;
+const httpStatusCodes = require('../utils/httpStatusCodes');
 
 module.exports.getAllCards = (req, res) => {
   Cards.find({})
-    .orFail(() => new Error('NotFound'))
-    .then((cards) => res.status(SUCСESSFUL_REQUEST).send(cards))
-    .catch(() => res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' }));
+    .then((cards) => res.status(httpStatusCodes.SUCСESSFUL_REQUEST).send(cards))
+    .catch(() => res.status(httpStatusCodes.SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' }));
 };
 
 module.exports.createCard = (req, res) => {
@@ -17,12 +12,12 @@ module.exports.createCard = (req, res) => {
   const owner = req.user._id;
 
   Cards.create({ name, link, owner })
-    .then((card) => res.status(SUCСESSFUL_REQUEST).send(card))
+    .then((card) => res.status(httpStatusCodes.SUCСESSFUL_REQUEST).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные при создании карточки -- ${err.name}` });
+        res.status(httpStatusCodes.BAD_REQUEST).send({ message: `Переданы некорректные данные при создании карточки -- ${err.name}` });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' });
+        res.status(httpStatusCodes.SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
@@ -32,14 +27,14 @@ module.exports.deleteCardById = (req, res) => {
 
   Cards.findByIdAndRemove(cardId)
     .orFail(() => new Error('NotFound'))
-    .then((card) => res.status(SUCСESSFUL_REQUEST).send(card))
+    .then((card) => res.status(httpStatusCodes.SUCСESSFUL_REQUEST).send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные для удаления карточки -- ${err.name}` });
+        res.status(httpStatusCodes.BAD_REQUEST).send({ message: `Переданы некорректные данные для удаления карточки -- ${err.name}` });
       } else if (err.message === 'NotFound') {
-        res.status(NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
+        res.status(httpStatusCodes.NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' });
+        res.status(httpStatusCodes.SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
@@ -50,14 +45,14 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   ).orFail(() => new Error('NotFound'))
-    .then((card) => res.status(SUCСESSFUL_REQUEST).send(card))
+    .then((card) => res.status(httpStatusCodes.SUCСESSFUL_REQUEST).send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные для постановки лайка -- ${err.name}` });
+        res.status(httpStatusCodes.BAD_REQUEST).send({ message: `Переданы некорректные данные для постановки лайка -- ${err.name}` });
       } else if (err.message === 'NotFound') {
-        res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
+        res.status(httpStatusCodes.NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' });
+        res.status(httpStatusCodes.SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
@@ -68,14 +63,14 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   ).orFail(() => new Error('NotFound'))
-    .then((card) => res.status(SUCСESSFUL_REQUEST).send(card))
+    .then((card) => res.status(httpStatusCodes.SUCСESSFUL_REQUEST).send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные для снятия лайка  -- ${err.name}` });
+        res.status(httpStatusCodes.BAD_REQUEST).send({ message: `Переданы некорректные данные для снятия лайка  -- ${err.name}` });
       } else if (err.message === 'NotFound') {
-        res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
+        res.status(httpStatusCodes.NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' });
+        res.status(httpStatusCodes.SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
