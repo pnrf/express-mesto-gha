@@ -1,4 +1,4 @@
-[![Tests](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-13-sprint.yml) [![Tests](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-14-sprint.yml)
+[![Tests for sprint 13](https://github.com/pnrf/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/pnrf/express-mesto-gha/actions/workflows/tests-13-sprint.yml) [![Tests for sprint 14](https://github.com/pnrf/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/pnrf/express-mesto-gha/actions/workflows/tests-14-sprint.yml)
 # [Проект Mesto](https://github.com/pnrf/express-mesto-gha) фронтенд + бэкенд
 *- это учебный проект по основам backend на курсе "веб-разработчик" в Яндекс.Практикуме (**13-14 спринты**).*
 
