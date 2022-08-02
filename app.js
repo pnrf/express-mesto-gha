@@ -4,6 +4,9 @@ const routesUsers = require('./routes/users');
 const routesCards = require('./routes/cards');
 const httpStatusCodes = require('./utils/httpStatusCodes');
 
+const { createUser, login } = require('./controllers/users');
+const auth = require('./middlewares/auth');
+
 const { PORT = 3000 } = process.env;
 const app = express();
 
@@ -17,6 +20,11 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.post('/signup', createUser);
+app.post('/signin', login);
+app.use(auth);
+app.use('/cards', require('./routes/cards'));
 
 app.use(routesUsers);
 app.use(routesCards);
