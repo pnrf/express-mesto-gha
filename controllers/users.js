@@ -49,6 +49,29 @@ module.exports.createUser = (req, res) => {
     });
 };
 
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Неверно указаны почта или пароль'));
+      }
+
+      return bcrypt.compare(password, user.password);
+    })
+    .then((matched) => {
+      if (!matched) {
+        return Promise.reject(new Error('Неверно указаны почта или пароль'));
+      }
+
+      return res.status(httpStatusCodes.SUCСESSFUL_REQUEST).send({ message: 'Регистрация прошла успешно!' });
+    })
+    .catch((err) => {
+      res.status(httpStatusCodes.UNAUTHORIZED).send({ message: err.message });
+    });
+};
+
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
 
