@@ -1,5 +1,6 @@
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const httpStatusCodes = require('../utils/httpStatusCodes');
 
@@ -54,7 +55,10 @@ module.exports.login = (req, res) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res.send({ token });
 
+      res.status(httpStatusCodes.SUCСESSFUL_REQUEST).send({ message: 'Регистрация прошла успешно!' });
     })
     .catch((err) => {
       res.status(httpStatusCodes.UNAUTHORIZED).send({ message: err.message });
