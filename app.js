@@ -25,6 +25,11 @@ app.use((req, res) => {
   res.status(httpStatusCodes.NOT_FOUND).send({ message: 'Запрашиваемый ресурс не найден' });
 });
 
+app.use(errors());
+app.use((err, req, res, next) => {
+  // централизованный обработчик ошибок
+});
+
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   // useNewUrlParser: true,
   // useCreateIndex: true,
