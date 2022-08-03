@@ -4,10 +4,16 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const httpStatusCodes = require('../utils/httpStatusCodes');
 
-module.exports.getAllUsers = (req, res) => {
+module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.status(httpStatusCodes.SUCСESSFUL_REQUEST).send(users))
-    .catch(() => res.status(httpStatusCodes.SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' }));
+    .catch((next) => res.status(httpStatusCodes.SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' }));
+};
+
+module.exports.getCurrentUser = (req, res) => {
+  const { } = req.params;
+
+  // здесь будет контроллер для получения информации о текущем пользователе
 };
 
 module.exports.getUserById = (req, res) => {
@@ -44,6 +50,8 @@ module.exports.createUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         res.status(httpStatusCodes.BAD_REQUEST).send({ message: `Переданы некорректные данные при создании пользователя -- ${err.name}` });
+      } else if (err.code === 11000) {
+        res.status(httpStatusCodes.CONFLICT).send({ message: 'Пользователь с таким email уже зарегистрирован' });
       } else {
         res.status(httpStatusCodes.SERVER_ERROR).send({ message: 'Ошибка по умолчанию.' });
       }
@@ -61,7 +69,7 @@ module.exports.login = (req, res) => {
       res.status(httpStatusCodes.SUCСESSFUL_REQUEST).send({ message: 'Регистрация прошла успешно!' });
     })
     .catch((err) => {
-      res.status(httpStatusCodes.UNAUTHORIZED).send({ message: err.message });
+      res.status(httpStatusCodes.UNAUTHORIZED).send({ message: 'Требуется авторизация' });
     });
 };
 
