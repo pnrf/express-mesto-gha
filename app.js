@@ -1,8 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
 const routesUsers = require('./routes/users');
 const routesCards = require('./routes/cards');
-const httpStatusCodes = require('./utils/httpStatusCodes');
+// const httpStatusCodes = require('./utils/httpStatusCodes');
+const NotFoundError = require('./errors/not-found-error');
 
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
@@ -21,13 +23,20 @@ app.use('/cards', require('./routes/cards'));
 app.use(routesUsers);
 app.use(routesCards);
 
-app.use((req, res) => {
-  res.status(httpStatusCodes.NOT_FOUND).send({ message: 'Запрашиваемый ресурс не найден' });
+app.use(() => {
+  throw new NotFoundError('Запрашиваемый ресурс не найден');
+  // res.status(httpStatusCodes.NOT_FOUND).send({ message: 'Запрашиваемый ресурс не найден' });
 });
 
+// обработчик ошибок валидации - Joi, celebrate
 app.use(errors());
+// централизованный обработчик ошибок
 app.use((err, req, res, next) => {
-  // централизованный обработчик ошибок
+  const { statusCode = 500, message } = err;
+  res.status(statusCode).send({
+    message: statusCode === 500 ? 'Ошибка по умолчанию.' : message,
+  });
+  next();
 });
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
