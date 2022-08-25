@@ -17,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.post('/signup', createUser);
 app.post('/signin', login);
+
 app.use(auth);
 app.use('/cards', require('./routes/cards'));
 
@@ -30,6 +31,7 @@ app.use(() => {
 
 // обработчик ошибок валидации - Joi, celebrate
 app.use(errors());
+
 // централизованный обработчик ошибок
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;

@@ -9,9 +9,16 @@ const {
   updateAvatar,
 } = require('../controllers/users');
 
+const {
+  validateUserId,
+  validateUpdateProfile,
+  validateUpdateAvatar,
+} = require('../middlewares/validators');
+
 router.get('/users', getAllUsers);
 router.get('/users/me', getCurrentUser);
-router.get('/users/:userId', getUserById);
+router.get('/users/:userId', validateUserId, getUserById);
+
 router.post('/users', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
@@ -22,7 +29,7 @@ router.post('/users', celebrate({
   }).unknown(true),
 }), createUser);
 
-router.patch('/users/me', updateProfile);
-router.patch('/users/me/avatar', updateAvatar);
+router.patch('/users/me', validateUpdateProfile, updateProfile);
+router.patch('/users/me/avatar', validateUpdateAvatar, updateAvatar);
 
 module.exports = router;
