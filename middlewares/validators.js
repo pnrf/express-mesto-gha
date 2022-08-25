@@ -10,16 +10,22 @@ const isUrl = (link) => {
   throw new Error('Невалидный URL');
 };
 
+const isRegex = (avatar) => {
+  // eslint-disable-next-line no-useless-escape
+  const regex = '/[-a-zA-Z0-9@:%_\+.~#?&\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/=]*)?/gi';
+  if (regex) {
+    return avatar;
+  }
+  throw new Error('Невалидный URL, не соответствует regex');
+};
+
 const validateSignUp = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(
-      // eslint-disable-next-line no-useless-escape
-      /[-a-zA-Z0-9@:%_\+.~#?&\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/=]*)?/gi,
-    ),
+    avatar: Joi.string().custom(isRegex),
   }),
 });
 
@@ -36,17 +42,16 @@ const validateUserId = celebrate({
   }),
 });
 
-const validateProfileUpdate = celebrate({
+const validateUpdateProfile = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
   }),
 });
 
-const validateAvatarUpdate = celebrate({
+const validateUpdateAvatar = celebrate({
   body: Joi.object().keys({
-    // eslint-disable-next-line no-useless-escape
-    avatar: Joi.string().required().regex(/[-a-zA-Z0-9@:%_\+.~#?&\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/=]*)?/gi),
+    avatar: Joi.string().required().custom(isRegex),
   }),
 });
 
@@ -67,8 +72,8 @@ module.exports = {
   validateSignUp,
   validateSignIn,
   validateUserId,
-  validateProfileUpdate,
-  validateAvatarUpdate,
+  validateUpdateProfile,
+  validateUpdateAvatar,
   validateCardCreation,
   validateCardId,
 };

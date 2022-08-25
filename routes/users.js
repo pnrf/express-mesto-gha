@@ -32,4 +32,7 @@ router.post('/users', celebrate({
 router.patch('/users/me', validateUpdateProfile, updateProfile);
 router.patch('/users/me/avatar', validateUpdateAvatar, updateAvatar);
 
+router.patch('/users/me', validateUpdateProfile, updateProfile);
+router.patch('/users/me/avatar', validateUpdateAvatar, updateAvatar);
+
 module.exports = router;
