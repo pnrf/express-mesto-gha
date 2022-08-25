@@ -8,6 +8,7 @@ const NotFoundError = require('./errors/not-found-error');
 
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const { validateSignUp, validateSignIn } = require('./middlewares/validators');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -15,8 +16,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.post('/signup', createUser);
-app.post('/signin', login);
+app.post('/signup', validateSignUp, createUser);
+app.post('/signin', validateSignIn, login);
 
 app.use(auth);
 app.use('/cards', require('./routes/cards'));

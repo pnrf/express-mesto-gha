@@ -10,7 +10,7 @@ const isUrl = (link) => {
   throw new Error('Невалидный URL');
 };
 
-const validateSignup = celebrate({
+const validateSignUp = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
@@ -64,7 +64,7 @@ const validateCardId = celebrate({
 });
 
 module.exports = {
-  validateSignup,
+  validateSignUp,
   validateSignIn,
   validateUserId,
   validateProfileUpdate,
