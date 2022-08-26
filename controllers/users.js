@@ -1,4 +1,4 @@
-const validator = require('validator');
+// const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -70,7 +70,7 @@ module.exports.createUser = (req, res, next) => {
       });
     })
     .then((user) => {
-        res.status(201).send(user);
+      res.status(201).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
@@ -142,10 +142,7 @@ module.exports.updateAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         throw new BadRequestError(`Переданы некорректные данные при обновлении профиля -- ${err.name}`);
-      } else if (err.message === 'NotFound') {
-        throw new NotFoundError('Пользователь с указанным _id не найден');
-      } else {
-        next(err);
       }
+      next(err);
     });
 };
