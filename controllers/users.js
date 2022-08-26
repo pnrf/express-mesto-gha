@@ -20,15 +20,18 @@ module.exports.getAllUsers = (req, res, next) => {
 module.exports.getCurrentUser = (req, res, next) => {
   User
     .findById(req.user._id)
-    .orFail(() => {
-      throw new NotFoundError('Пользователь не найден');
+    // .orFail(() => {
+    //   throw new NotFoundError('Пользователь не найден');
+    // })
+    .then((user) => {
+      if (!user) {
+        return next(new NotFoundError('Пользователь не найден'));
+      }
+      return res.status(200).send(user);
     })
-    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные');
-      } else if (err.message === 'NotFound') {
-        throw new NotFoundError('Пользователь не найден');
+        next(new BadRequestError('Переданы некорректные данные'));
       }
     })
     .catch(next);
@@ -84,11 +87,12 @@ module.exports.login = (req, res, next) => {
     .findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      // res.cookie('jwt', token, {
-      //   httpOnly: true,
-      //   sameSite: true,
-      // })
-      res.send({ token });
+      res
+        .cookie('jwt', token, {
+          httpOnly: true,
+          sameSite: true,
+        })
+        .send({ token });
     })
     .catch(next);
 };
