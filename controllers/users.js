@@ -7,6 +7,7 @@ const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
 const NotFoundError = require('../errors/not-found-error');
 // const ServerError = require('../errors/server-error');
+const { JWT_SECRET } = require('../utils/jwtAuth');
 
 module.exports.getAllUsers = (req, res, next) => {
   User
@@ -77,7 +78,7 @@ module.exports.login = (req, res, next) => {
   User
     .findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
       res
         .status(200)
         .cookie('jwt', token, {
