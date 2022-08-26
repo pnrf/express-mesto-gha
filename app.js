@@ -19,10 +19,8 @@ app.post('/signup', validateSignUp, createUser);
 app.post('/signin', validateSignIn, login);
 
 app.use(auth);
-app.use('/cards', require('./routes/cards'));
-
-app.use(routesUsers);
-app.use(routesCards);
+app.use('/users', routesUsers);
+app.use('/cards', routesCards);
 
 app.use(() => {
   throw new NotFoundError('Запрашиваемый ресурс не найден');
