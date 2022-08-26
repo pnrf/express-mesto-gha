@@ -2,19 +2,16 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const AuthError = require('../errors/auth-error');
+// const AuthError = require('../errors/auth-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
 const NotFoundError = require('../errors/not-found-error');
-const ServerError = require('../errors/server-error');
+// const ServerError = require('../errors/server-error');
 
 module.exports.getAllUsers = (req, res, next) => {
   User
     .find({})
     .then((users) => {
-      if (!users) {
-        throw new ServerError('Ошибка по умолчанию.');
-      }
       res.status(200).send(users);
     })
     .catch(next);
@@ -49,8 +46,6 @@ module.exports.getUserById = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError(`Переданы некорректные данные при создании пользователя -- ${err.name}`));
-      } else if (err.message === 'NotFound') {
-        next(new NotFoundError('Пользователь по указанному _id не найден'));
       } else {
         next(err);
       }
@@ -59,11 +54,11 @@ module.exports.getUserById = (req, res, next) => {
 
 module.exports.createUser = (req, res, next) => {
   const {
-    name, about, avatar, email, password,
+    name, about, avatar, email,
   } = req.body;
 
   bcrypt
-    .hash(password, 10)
+    .hash(req.body.password, 10)
     .then((hash) => {
       User.create({
         name, about, avatar, email, password: hash,
@@ -73,7 +68,7 @@ module.exports.createUser = (req, res, next) => {
       res.status(201).send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         throw new BadRequestError(`Переданы некорректные данные при создании пользователя -- ${err.name}`);
       } else if (err.code === 11000) {
         throw new ConflictError('Пользователь с таким email уже зарегистрирован');
@@ -93,19 +88,16 @@ module.exports.login = (req, res, next) => {
       res.cookie('jwt', token, {
         httpOnly: true,
         sameSite: true,
-      });
-
-      res.status(200).send({ token, message: 'Регистрация прошла успешно!' });
+      })
+        .send({ token });
     })
-    .catch(() => {
-      next(new AuthError('Требуется авторизация'));
-    });
+    .catch(next);
 };
 
 module.exports.updateProfile = (req, res, next) => {
   const { name, about } = req.body;
 
-  return User
+  User
     .findByIdAndUpdate(
       req.user._id,
       { name, about },
@@ -126,7 +118,7 @@ module.exports.updateProfile = (req, res, next) => {
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
-  return User
+  User
     .findByIdAndUpdate(
       req.user._id,
       { avatar },
@@ -140,7 +132,6 @@ module.exports.updateAvatar = (req, res, next) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         throw new BadRequestError(`Переданы некорректные данные при обновлении профиля -- ${err.name}`);
       }
-      // next(err);
-    })
-    .catch(next);
+      next(err);
+    });
 };
