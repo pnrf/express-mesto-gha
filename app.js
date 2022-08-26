@@ -3,9 +3,7 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const routesUsers = require('./routes/users');
 const routesCards = require('./routes/cards');
-// const httpStatusCodes = require('./utils/httpStatusCodes');
 const NotFoundError = require('./errors/not-found-error');
-
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { validateSignUp, validateSignIn } = require('./middlewares/validators');
@@ -27,10 +25,8 @@ app.use(routesCards);
 
 app.use(() => {
   throw new NotFoundError('Запрашиваемый ресурс не найден');
-  // res.status(httpStatusCodes.NOT_FOUND).send({ message: 'Запрашиваемый ресурс не найден' });
 });
 
-// обработчик ошибок валидации - Joi, celebrate
 app.use(errors());
 
 // централизованный обработчик ошибок
