@@ -105,7 +105,7 @@ module.exports.login = (req, res, next) => {
 module.exports.updateProfile = (req, res, next) => {
   const { name, about } = req.body;
 
-  User
+  return User
     .findByIdAndUpdate(
       req.user._id,
       { name, about },
@@ -118,18 +118,15 @@ module.exports.updateProfile = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         throw new BadRequestError(`Переданы некорректные данные при обновлении профиля -- ${err.name}`);
-      } else if (err.message === 'NotFound') {
-        throw new NotFoundError('Пользователь с указанным _id не найден');
-      } else {
-        next(err);
       }
+      next(err);
     });
 };
 
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
-  User
+  return User
     .findByIdAndUpdate(
       req.user._id,
       { avatar },
@@ -143,6 +140,7 @@ module.exports.updateAvatar = (req, res, next) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         throw new BadRequestError(`Переданы некорректные данные при обновлении профиля -- ${err.name}`);
       }
-      next(err);
-    });
+      // next(err);
+    })
+    .catch(next);
 };
