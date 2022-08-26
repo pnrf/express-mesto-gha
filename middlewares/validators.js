@@ -1,6 +1,6 @@
 const { celebrate, Joi } = require('celebrate');
 const validator = require('validator');
-const BadRequestError = require('../errors/bad-request-error');
+// const BadRequestError = require('../errors/bad-request-error');
 const { urlRegex } = require('../utils/regex');
 
 const validateUrl = (url) => {
@@ -8,7 +8,7 @@ const validateUrl = (url) => {
   if (result) {
     return url;
   }
-  throw new BadRequestError('Невалидный URL');
+  throw new Error('Невалидный URL');
 };
 
 const validateUserId = celebrate({
