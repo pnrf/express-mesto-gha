@@ -1,13 +1,10 @@
-// const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-// const AuthError = require('../errors/auth-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
 const NotFoundError = require('../errors/not-found-error');
-// const ServerError = require('../errors/server-error');
-const { JWT_SECRET } = require('../utils/jwtAuth');
+const { JWT_SECRET } = require('../utils/jwtKey');
 
 module.exports.getAllUsers = (req, res, next) => {
   User
