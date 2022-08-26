@@ -14,9 +14,7 @@ module.exports.getAllUsers = (req, res, next) => {
     .then((users) => {
       res.status(200).send(users);
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 module.exports.getCurrentUser = (req, res, next) => {

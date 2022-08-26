@@ -1,6 +1,7 @@
 const { celebrate, Joi } = require('celebrate');
 const validator = require('validator');
 const BadRequestError = require('../errors/bad-request-error');
+const { urlRegex } = require('../utils/regex');
 
 const validateUrl = (url) => {
   const result = validator.isURL(url);
@@ -9,9 +10,6 @@ const validateUrl = (url) => {
   }
   throw new BadRequestError('Невалидный URL');
 };
-
-/* eslint no-useless-escape: 0 */
-const urlRegex = /[-a-zA-Z0-9@:%_\+.~#?&\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/=]*)?/;
 
 const validateUserId = celebrate({
   params: Joi.object().keys({
