@@ -10,11 +10,13 @@ const NotFoundError = require('./errors/not-found-error');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { validateSignUp, validateSignIn } = require('./middlewares/validators');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const errorHandler = require('./middlewares/errorHandler');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
+app.use(requestLogger);
 app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());
@@ -31,6 +33,7 @@ app.use(() => {
   throw new NotFoundError('Запрашиваемый ресурс не найден');
 });
 
+app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
 
