@@ -1,13 +1,13 @@
 const { celebrate, Joi } = require('celebrate');
-// const isUrl = require('validator/lib/isURL');
 const validator = require('validator');
+const BadRequestError = require('../errors/bad-request-error');
 
-const isUrl = (link) => {
-  const result = validator.isURL(link);
+const validateUrl = (url) => {
+  const result = validator.isURL(url);
   if (result) {
-    return link;
+    return url;
   }
-  throw new Error('Невалидный URL');
+  throw new BadRequestError('Невалидный URL');
 };
 
 const isRegex = (avatar) => {
@@ -19,6 +19,12 @@ const isRegex = (avatar) => {
   throw new Error('Невалидный URL, не соответствует regex');
 };
 
+const validateUserId = celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().hex().length(24),
+  }),
+});
+
 const validateSignUp = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
@@ -26,19 +32,13 @@ const validateSignUp = celebrate({
     avatar: Joi.string().custom(isRegex),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
-  }).unknown(true),
+  }),
 });
 
 const validateSignIn = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-});
-
-const validateUserId = celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().hex().length(24),
+    password: Joi.string().required(),
   }),
 });
 
@@ -55,10 +55,11 @@ const validateUpdateAvatar = celebrate({
   }),
 });
 
+
 const validateCardCreation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().custom(isUrl),
+    link: Joi.string().required().custom(validateUrl),
   }),
 });
 
@@ -69,9 +70,9 @@ const validateCardId = celebrate({
 });
 
 module.exports = {
+  validateUserId,
   validateSignUp,
   validateSignIn,
-  validateUserId,
   validateUpdateProfile,
   validateUpdateAvatar,
   validateCardCreation,
