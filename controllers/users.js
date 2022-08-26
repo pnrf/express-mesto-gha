@@ -21,11 +21,12 @@ module.exports.getAllUsers = (req, res, next) => {
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
-  User.findById(req.user._id)
+  User
+    .findById(req.user._id)
     .orFail(() => {
       throw new NotFoundError('Пользователь не найден');
     })
-    .then((user) => res.status(200).send({ user }))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Переданы некорректные данные');
@@ -51,7 +52,7 @@ module.exports.getUserById = (req, res, next) => {
       } else if (err.message === 'NotFound') {
         next(new NotFoundError('Пользователь по указанному _id не найден'));
       } else {
-        next(new ServerError('Ошибка по умолчанию.'));
+        next(err);
       }
     });
 };
@@ -63,21 +64,21 @@ module.exports.createUser = (req, res, next) => {
 
   bcrypt
     .hash(password, 10)
-    .then((hash) => User.create({
-      name, about, avatar, email, password: hash,
-    }))
+    .then((hash) => {
+      User.create({
+        name, about, avatar, email, password: hash,
+      });
+    })
     .then((user) => {
-      if (validator.isEmail(email)) {
-        res.status(200).send(user);
-      }
+        res.status(201).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new BadRequestError(`Переданы некорректные данные при создании пользователя -- ${err.name}`));
+        throw new BadRequestError(`Переданы некорректные данные при создании пользователя -- ${err.name}`);
       } else if (err.code === 11000) {
-        next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
+        throw new ConflictError('Пользователь с таким email уже зарегистрирован');
       } else {
-        next(new ServerError('Ошибка по умолчанию.'));
+        next(err);
       }
     });
 };
@@ -85,13 +86,16 @@ module.exports.createUser = (req, res, next) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User
+  User
     .findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.send({ token });
+      res.cookie('jwt', token, {
+        httpOnly: true,
+        sameSite: true,
+      });
 
-      res.status(200).send({ message: 'Регистрация прошла успешно!' });
+      res.status(200).send({ token, message: 'Регистрация прошла успешно!' });
     })
     .catch(() => {
       next(new AuthError('Требуется авторизация'));
@@ -113,11 +117,11 @@ module.exports.updateProfile = (req, res, next) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new BadRequestError(`Переданы некорректные данные при обновлении профиля -- ${err.name}`));
+        throw new BadRequestError(`Переданы некорректные данные при обновлении профиля -- ${err.name}`);
       } else if (err.message === 'NotFound') {
-        next(new NotFoundError('Пользователь с указанным _id не найден'));
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       } else {
-        next(new ServerError('Ошибка по умолчанию.'));
+        next(err);
       }
     });
 };
@@ -137,11 +141,11 @@ module.exports.updateAvatar = (req, res, next) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new BadRequestError(`Переданы некорректные данные при обновлении профиля -- ${err.name}`));
+        throw new BadRequestError(`Переданы некорректные данные при обновлении профиля -- ${err.name}`);
       } else if (err.message === 'NotFound') {
-        next(new NotFoundError('Пользователь с указанным _id не найден'));
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       } else {
-        next(new ServerError('Ошибка по умолчанию.'));
+        next(err);
       }
     });
 };
