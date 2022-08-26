@@ -14,7 +14,9 @@ module.exports.getAllUsers = (req, res, next) => {
     .then((users) => {
       res.status(200).send(users);
     })
-    .catch(next);
+    .catch((err) => {
+      return next(err);
+    });
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
@@ -45,10 +47,9 @@ module.exports.getUserById = (req, res, next) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError(`Переданы некорректные данные при создании пользователя -- ${err.name}`));
-      } else {
-        next(err);
+        return next(new BadRequestError(`Переданы некорректные данные при создании пользователя -- ${err.name}`));
       }
+      return next(err);
     });
 };
 
