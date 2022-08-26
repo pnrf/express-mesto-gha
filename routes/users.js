@@ -16,13 +16,13 @@ const {
   validateUpdateAvatar,
 } = require('../middlewares/validators');
 
-router.get('/users', getAllUsers);
-router.get('/users/me', getCurrentUser);
-router.get('/users/:userId', validateUserId, getUserById);
+router.get('/', getAllUsers);
+router.get('/me', getCurrentUser);
+router.get('/:userId', validateUserId, getUserById);
 
 // router.post('/users', validateSignUp, createUser);
 
-router.patch('/users/me', validateUpdateProfile, updateProfile);
-router.patch('/users/me/avatar', validateUpdateAvatar, updateAvatar);
+router.patch('/me', validateUpdateProfile, updateProfile);
+router.patch('/me/avatar', validateUpdateAvatar, updateAvatar);
 
 module.exports = router;
