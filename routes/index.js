@@ -16,9 +16,8 @@ router.use('/cards', cardRouters);
 router.post('/signup', validateSignUp, createUser);
 router.post('/signin', validateSignIn, login);
 
-router.use(auth);
-// router.use('*', auth, () => {
-//   throw new NotFoundError('Запрашиваемый ресурс не найден');
-// });
+router.use('*', auth, () => {
+  throw new NotFoundError('Запрашиваемый ресурс не найден');
+});
 
 module.exports = router;
