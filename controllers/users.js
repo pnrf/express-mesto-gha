@@ -22,15 +22,20 @@ module.exports.getAllUsers = (req, res, next) => {
 module.exports.getCurrentUser = (req, res, next) => {
   User
     .findById(req.user._id)
-    .orFail(() => {
-      throw new NotFoundError('Пользователь не найден');
+    // .orFail(() => {
+    //   throw new NotFoundError('Пользователь не найден');
+    // })
+    .then((user) => {
+      if (!user) {
+        return next(new NotFoundError('Пользователь по указанному _id не найден'));
+      }
+      return res.status(200).send(user);
     })
-    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw next(new BadRequestError('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные'));
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -79,14 +84,11 @@ module.exports.login = (req, res, next) => {
   User
     .findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : jwtKey,
-        { expiresIn: '7d' },
-      );
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : jwtKey, { expiresIn: '7d' });
       res
         .status(200)
         .cookie('jwt', token, {
+          maxAge: 3600000,
           httpOnly: true,
           sameSite: true,
         })
@@ -127,15 +129,16 @@ module.exports.updateAvatar = (req, res, next) => {
       { avatar },
       { new: true, runValidators: true },
     )
-    .orFail(() => {
-      throw new NotFoundError('Пользователь с указанным _id не найден');
+    .then((user) => {
+      if (!user) {
+        return next(new NotFoundError('Пользователь по указанному _id не найден'));
+      }
+      return res.status(200).send({ data: user });
     })
-    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        throw new BadRequestError(`Переданы некорректные данные при обновлении профиля -- ${err.name}`);
-      } else {
-        return next(err);
+        next(new BadRequestError(`Переданы некорректные данные при обновлении профиля -- ${err.name}`));
       }
+      next(err);
     });
 };
