@@ -60,22 +60,26 @@ module.exports.getUserById = (req, res, next) => {
 
 module.exports.createUser = (req, res, next) => {
   const {
-    name, about, avatar, email, password,
+    name, about, avatar, email,
   } = req.body;
 
-  bcrypt.hash(password, 10)
-    .then((hash) => User.create({
-      name, about, avatar, email, password: hash,
-    }))
-    .then((user) => res.status(201).send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new BadRequestError(`Переданы некорректные данные при создании пользователя -- ${err.name}`));
-      } else if (err.code === 11000) {
-        next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
-      }
-      next(err);
-    });
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => {
+      User
+        .create({
+          name, about, avatar, email, password: hash,
+        })
+        .then((user) => res.status(201).send(user))
+        .catch((err) => {
+          if (err.name === 'ValidationError' || err.name === 'CastError') {
+            next(new BadRequestError(`Переданы некорректные данные при создании пользователя -- ${err.name}`));
+          } else if (err.code === 11000) {
+            next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
+          }
+          next(err);
+        });
+    })
+    .catch(next);
 };
 
 module.exports.login = (req, res, next) => {
