@@ -6,7 +6,7 @@ const cardRouters = require('./cards');
 const { validateSignUp, validateSignIn } = require('../middlewares/validators');
 const { createUser, login } = require('../controllers/users');
 
-const NotFoundError = require('../errors/not-found-error');
+const { NotFoundError } = require('../errors/index-errors');
 
 const router = express.Router();
 

@@ -1,8 +1,9 @@
 const { celebrate, Joi } = require('celebrate');
 const validator = require('validator');
-const BadRequestError = require('../errors/bad-request-error');
+const { BadRequestError } = require('../errors/index-errors');
 const { urlRegex } = require('../utils/regex');
 
+// чтобы при создании карточки выбрасывал ошибку при невалидном url
 const validateUrl = (url) => {
   const result = validator.isURL(url);
   if (result) {
@@ -11,12 +12,14 @@ const validateUrl = (url) => {
   throw new BadRequestError('Невалидный URL');
 };
 
+// для get user by id
 const validateUserId = celebrate({
   params: Joi.object().keys({
     userId: Joi.string().hex().length(24),
-  }),
+  }).unknown(true),
 });
 
+// для регистрации (создания) нового пользователя
 const validateSignUp = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
@@ -27,6 +30,7 @@ const validateSignUp = celebrate({
   }).unknown(true),
 });
 
+// когда существующий пользователь логинится
 const validateSignIn = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -54,6 +58,7 @@ const validateCardCreation = celebrate({
   }).unknown(true),
 });
 
+// для удаления карточки пользоваля, для лайка и для дизлайка
 const validateCardId = celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().hex().length(24),
