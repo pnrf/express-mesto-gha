@@ -10,8 +10,8 @@ const { NotFoundError } = require('../errors/index-errors');
 
 const router = express.Router();
 
-router.use('/users', auth, userRouters);
-router.use('/cards', auth, cardRouters);
+router.use('/users', userRouters);
+router.use('/cards', cardRouters);
 
 router.post('/signup', validateSignUp, createUser);
 router.post('/signin', validateSignIn, login);

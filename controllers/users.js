@@ -22,9 +22,6 @@ module.exports.getAllUsers = (req, res, next) => {
 module.exports.getCurrentUser = (req, res, next) => {
   User
     .findById(req.user._id)
-    // .orFail(() => {
-    //   throw new NotFoundError('Пользователь не найден');
-    // })
     .then((user) => {
       if (!user) {
         return next(new NotFoundError('Пользователь по указанному _id не найден'));
