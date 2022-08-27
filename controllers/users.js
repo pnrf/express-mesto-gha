@@ -39,15 +39,17 @@ module.exports.getUserById = (req, res, next) => {
 
   User
     .findById(userId)
-    .orFail(() => {
-      throw new NotFoundError('Пользователь по указанному _id не найден');
+    .then((user) => {
+      if (!user) {
+        return next(new NotFoundError('Пользователь по указанному _id не найден'));
+      }
+      return res.status(200).send(user);
     })
-    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw next(new BadRequestError(`Переданы некорректные данные при создании пользователя -- ${err.name}`));
+        next(new BadRequestError(`Переданы некорректные данные при создании пользователя -- ${err.name}`));
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -98,20 +100,21 @@ module.exports.updateProfile = (req, res, next) => {
 
   User
     .findByIdAndUpdate(
-      req.user._id,
+      { _id: req.user._id },
       { name, about },
       { new: true, runValidators: true },
     )
-    .orFail(() => {
-      throw new NotFoundError('Пользователь по указанному _id не найден');
+    .then((user) => {
+      if (!user) {
+        return next(new NotFoundError('Пользователь по указанному _id не найден'));
+      }
+      return res.status(200).send({ data: user });
     })
-    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        throw new BadRequestError(`Переданы некорректные данные при обновлении профиля -- ${err.name}`);
-      } else {
-        return next(err);
+        next(new BadRequestError(`Переданы некорректные данные при обновлении профиля -- ${err.name}`));
       }
+      next(err);
     });
 };
 
