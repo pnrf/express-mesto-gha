@@ -21,11 +21,12 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/signup', validateSignUp, createUser);
 app.post('/signin', validateSignIn, login);
 
-app.use(auth);
+// app.use(auth);
 app.use('/users', routesUsers);
 app.use('/cards', routesCards);
 
