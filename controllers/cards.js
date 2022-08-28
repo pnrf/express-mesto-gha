@@ -84,7 +84,8 @@ module.exports.likeCard = (req, res, next) => {
         next(new BadRequestError('Переданы некорректные данные для постановки лайка'));
       }
       next(err);
-    });
+    })
+    .catch(next);
 };
 
 module.exports.dislikeCard = (req, res, next) => {
@@ -105,5 +106,6 @@ module.exports.dislikeCard = (req, res, next) => {
         next(new BadRequestError('Переданы некорректные данные для снятия лайка'));
       }
       next(err);
-    });
+    })
+    .catch(next);
 };
