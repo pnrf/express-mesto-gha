@@ -50,22 +50,6 @@ module.exports.deleteCardById = (req, res, next) => {
     });
 };
 
-//   Card
-//     .findById(cardId)
-//     .then((card) => {
-//       if (!card) {
-//         return next(new NotFoundError('Карточка с указанным _id не найдена'));
-//       }
-//       if (card.owner.toString() === req.user._id) {
-//         Card
-//           .findByIdAndRemove(cardId)
-//           .then(() => res.status(200).send(card));
-//       }
-//       throw new ForbiddenError('Попытка удалить чужую карточку');
-//     })
-//     .catch(next);
-// };
-
 module.exports.likeCard = (req, res, next) => {
   Card
     .findByIdAndUpdate(
@@ -77,15 +61,15 @@ module.exports.likeCard = (req, res, next) => {
       if (!card) {
         next(new NotFoundError('Карточка с указанным _id не найдена'));
       }
-      res.status(200).send(card);
+      return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для постановки лайка'));
       }
       next(err);
-    })
-    .catch(next);
+    });
+  // .catch(next);
 };
 
 module.exports.dislikeCard = (req, res, next) => {
@@ -106,6 +90,6 @@ module.exports.dislikeCard = (req, res, next) => {
         next(new BadRequestError('Переданы некорректные данные для снятия лайка'));
       }
       next(err);
-    })
-    .catch(next);
+    });
+  // .catch(next);
 };
