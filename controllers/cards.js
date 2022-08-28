@@ -57,6 +57,7 @@ module.exports.likeCard = (req, res, next) => {
       { $addToSet: { likes: req.user._id } },
       { new: true },
     )
+    .orFail(() => new NotFoundError('Указанный _id не найден'))
     .then((card) => {
       if (!card) {
         next(new NotFoundError('Карточка с указанным _id не найдена'));
