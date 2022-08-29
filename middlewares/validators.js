@@ -16,7 +16,7 @@ const validateUrl = (url) => {
 const validateUserId = celebrate({
   params: Joi.object().keys({
     userId: Joi.string().hex().length(24),
-  }).unknown(true),
+  }),
 });
 
 // для регистрации (создания) нового пользователя
@@ -27,7 +27,7 @@ const validateSignUp = celebrate({
     avatar: Joi.string().pattern(urlRegex),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
-  }).unknown(true),
+  }),
 });
 
 // когда существующий пользователь логинится
@@ -35,34 +35,34 @@ const validateSignIn = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
-  }).unknown(true),
+  }),
 });
 
 const validateUpdateProfile = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-  }).unknown(true),
+  }),
 });
 
 const validateUpdateAvatar = celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().pattern(urlRegex),
-  }).unknown(true),
+  }),
 });
 
 const validateCardCreation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     link: Joi.string().required().custom(validateUrl),
-  }).unknown(true),
+  }),
 });
 
 // для удаления карточки пользоваля, для лайка и для дизлайка
 const validateCardId = celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().hex().length(24),
-  }).unknown(true),
+  }),
 });
 
 module.exports = {
