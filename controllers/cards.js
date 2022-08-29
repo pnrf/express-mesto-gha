@@ -9,7 +9,7 @@ const {
 module.exports.getAllCards = (req, res, next) => {
   Card
     .find({})
-    .then((cards) => res.status(200).send(cards))
+    .then((cards) => res.send({ cards }))
     .catch(next);
 };
 
@@ -19,7 +19,7 @@ module.exports.createCard = (req, res, next) => {
 
   Card
     .create({ name, link, owner })
-    .then((card) => res.status(200).send({ data: card }))
+    .then((card) => res.send({ card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`Переданы некорректные данные при создании карточки -- ${err.name}`));
@@ -64,7 +64,7 @@ module.exports.likeCard = (req, res, next) => {
       if (!card) {
         return next(new NotFoundError('Карточка с указанным _id не найдена'));
       }
-      return res.status(200).send({ card, message: 'Лайк успешно поставлен' });
+      return res.send({ card, message: 'Лайк успешно поставлен' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -87,7 +87,7 @@ module.exports.dislikeCard = (req, res, next) => {
       if (!card) {
         return next(new NotFoundError('Карточка с указанным _id не найдена'));
       }
-      return res.status(200).send({ card, message: 'Лайк успешно удален' });
+      return res.send({ card, message: 'Лайк успешно удален' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
