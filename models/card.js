@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { urlRegex } = require('../utils/regex');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -9,6 +10,12 @@ const cardSchema = new mongoose.Schema({
   },
   link: {
     type: String,
+    validate: {
+      validator(v) {
+        return urlRegex.test(v);
+      },
+      message: (props) => `${props.value} -- невалидная ссылка на картинку`,
+    },
     required: true,
   },
   owner: {
